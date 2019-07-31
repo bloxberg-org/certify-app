@@ -1,0 +1,17 @@
+{
+  "environment": "live",
+  "debug": true,
+  "Captcha": {
+    "secret": "6LehE3UUAAAAAMG1lwAiLBm5379wtSsuYgVd_0yW"
+  },
+  "Ethereum": {
+    "milliEtherToTransfer": 500,
+    "gasLimit": "30000",
+    "live": {
+      "rpc": "https://bloxberg.org/eth/",
+     "account": "0xaB59A1ea1aC9af9F77518b9B4AD80942adE35088",
+      "privateKey": process.env.PRIVATE_KEY
+    }
+  }
+}
+

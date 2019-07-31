@@ -1,0 +1,6 @@
+node_modules
+truffle.js
+.env
+deploymentProd.sh
+deploymentScript.sh
+.vscode
