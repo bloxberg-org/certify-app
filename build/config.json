@@ -1,9 +1,6 @@
 {
   "environment": "live",
   "debug": true,
-  "Captcha": {
-    "secret": "6LehE3UUAAAAAMG1lwAiLBm5379wtSsuYgVd_0yW"
-  },
   "Ethereum": {
     "milliEtherToTransfer": 500,
     "gasLimit": "30000",

@@ -3,7 +3,6 @@
     <v-card>
       <v-card-title>
         <div id="bolder" class="body-2">Verify your transaction in the blockchain</div>
-
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -24,7 +23,6 @@
           slot="items"
           slot-scope="props"
         >
-          <!-- <td>{{ props.item.timeStampConfirmed }}</td> -->
           <td>{{ props.item.timeStampSubmit }}</td>
           <td class="text-xs-right">
             <a v-bind:href="'https://blockexplorer.bloxberg.org/tx/' + props.item.hash + '/internal_transactions'">{{ props.item.hash }} </a>
@@ -38,8 +36,6 @@
     </v-card>
 </template>
 <script>
-// import axios from 'axios'
-
 import Request from 'axios-request-handler'
 import certifyResearchDataImport from '../../src/assets/createResearchDataABI.json'
 import abiDecoder from 'abi-decoder'
@@ -49,13 +45,6 @@ export default {
   data () {
     return {
       headers: [
-        // TODO: ADD TIMESTAMP SUBMITTED AND CONFIRMED
-        // {
-        //   text: 'Timestamp Confirmed',
-        //   align: 'left',
-        //   sortable: true,
-        //   value: 'timeStampConfirmed'
-        // },
         {
           text: 'Timestamp',
           align: 'left',
@@ -82,7 +71,7 @@ export default {
       var vm = this
       try {
         smartContractPolling
-          .poll(3000)
+          .poll(500000)
           .get(response => {
             response['data']['result'].shift()
             for (var key in response['data']['result']) {
@@ -96,16 +85,9 @@ export default {
                 response['data']['result'][key]['input']
               )
             }
-            // response['data']['result']['timeStamp'] = timeConverter(response['data']['result']['timeStamp'])
             vm.smartContractReturn = response['data']['result']
           })
           .then(contractData => {
-            // var placeholderObject = {}
-            // let contractDataRequired = contractData['data']['result']
-            // for (var key in contractDataRequired) {
-            //   placeholderObject[key] = {'hash': contractDataRequired[key]['hash'], 'timeStamp': contractDataRequired[key]['timeStamp']}
-            // }
-            // this.contractDataArray = placeholderObject
           })
       } catch (err) {
         console.log(err)

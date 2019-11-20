@@ -140,6 +140,7 @@ export default {
     submit () {
       if (this.$refs.form.validate()) {
         if (this.$store.state.web3.networkId === null) {
+          console.log('testthis')
           const verifyVariables = {
             verifychecksum: this.verifychecksum
           }
@@ -147,7 +148,6 @@ export default {
           .post('/verifyData', { verifyVariables })
           .then(res => {
             this.verifiedDataArray = res.data.dataArray
-            console.log(this.verifiedDataArray + 'test')
             return this.verifiedDataArray
           })
           .then(verifiedDataArray => {
@@ -190,6 +190,7 @@ export default {
                 this.researchDataArray[i],
                 { from: this.ethAddress }
               )
+              console.log(retrieved)
               this.tempArray = this.tempArray.concat(retrieved)
             }
             return this.tempArray
@@ -199,7 +200,6 @@ export default {
               .then(data => {
                 this.temparray = []
                 console.log(data)
-
                 for (var i = 0; i < data.length; i++) {
                   if (data[i][0] === this.verifychecksum) {
                     this.verifiedDataArray.push({
