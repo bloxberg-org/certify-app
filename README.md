@@ -1,0 +1,2 @@
+# certify-app
+With bloxberg, research claims need not be limited to one institution alone, but can be confirmed by the whole trusted network. Additionally, researchers can leverage bloxberg to create a transparent footprint of their work, without revealing its content. You can then generate a certificate that proves you uploaded this data at a certain time, therefore protecting you from being scooped or IP stolen. 
