@@ -9,20 +9,6 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    // {
-    //   mode: 'history',
-    //   path: '/',
-    //   name: 'Root',
-    //   component: Home,
-    //   meta: { view: Web3Message }
-    // },
-    // {
-    //   mode: 'history',
-    //   path: '/home',
-    //   name: 'Home',
-    //   component: Home,
-    //   meta: { view: Web3Message }
-    // },
     {
       mode: 'history',
       path: '/',

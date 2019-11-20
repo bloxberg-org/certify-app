@@ -31,5 +31,10 @@ module.exports = app => {
     "/sendBloxbergEmail",
     cors(),
     controllers.sendBloxbergEmail.sendBloxbergEmail.post
+  );
+  app.get(
+    "/healthcheck",
+    cors(),
+    controllers.healthcheck.healthcheck.get
   )
 };

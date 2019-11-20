@@ -19,6 +19,17 @@ module.exports = {
       console.log(authorName)
       console.log(timestampString)
 
+      if (typeof checksum !== 'string') {
+        const err = new Error('Checksum was not a string')
+        return res.status(400).send({ msg: err.message })
+      } else if (typeof authorName !== 'string') {
+        const err = new Error('author name was not a string')
+        return res.status(400).send({ msg: err.message })
+      } else if (typeof timestampString !== 'string') {
+        const err = new Error('timestamp was not a string')
+        return res.status(400).send({ msg: err.message })
+      }
+
       const certifyResearchDataArtifacts = JSON.parse(fileContents)
       const certifyResearchData = contract(certifyResearchDataArtifacts)
 
@@ -41,7 +52,8 @@ module.exports = {
       web3.eth.getAccounts(function (err, accs) {
         if (err != null) {
           console.error('There was an error fetching your accounts.')
-          return
+          const err = new Error('There was an error fetching your accounts')
+          return res.status(400).send({ msg: err.message })
         }
         if (accs.length === 0) {
           console.error(
@@ -50,8 +62,6 @@ module.exports = {
           return
         }
         console.log(accs[0])
-        // accounts = accs
-        // account = accounts[1]
         account = accs[0]
         certifyResearchDataContract.methods.createData(checksum, true, authorName, timestampString).send({
           from: account, gas: 1000000, gasPrice: 50000000000})

@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "de.mpg.mpdl.bloxberg",
+    "sha256_cert_fingerprints":
+    ["50:A6:A6:17:83:64:E3:15:E1:53:5C:F1:99:76:1F:83:88:63:CE:CA:51:CC:AF:72:50:08:62:E0:1F:58:77:DE"]
+  }
+}]

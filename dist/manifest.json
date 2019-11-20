@@ -39,9 +39,9 @@
    "density": "4.0"
   }
  ],
-  "start_url": "https://bloxberg.org/cert/certify",
+  "start_url": "https://certify.bloxberg.org",
   "background_color": "#FFFFFF",
   "display": "standalone",
-  "scope": "https://bloxberg.org/cert/",
+  "scope": "https://certify.bloxberg.org",
   "theme_color": "#FFFFFF"
 }

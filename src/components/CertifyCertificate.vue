@@ -134,7 +134,7 @@ export default {
           authorName: this.$store.state.user.authorName,
           timestampString: this.timestampString
         }
-        // Send to server to perform smart
+        // Send to server to perform transaction
         axios
           .post('/certifyData', { certifyVariables })
           .then(res => {
@@ -173,7 +173,8 @@ export default {
         this.checksum = this.$store.state.user.checksum
         this.authorName = this.$store.state.user.authorName
         await certifyResearchDataContract.methods.createData(self.checksum, true, self.authorName, self.timestampString).send({
-          from: self.ethAddress, gas: self.gasAmount, gasPrice: 9000000000})
+          // from: self.ethAddress, gas: self.gasAmount, gasPrice: 9000000000})
+          from: self.ethAddress, gas: 1000000, gasPrice: 50000000000})
           .then((receipt) => {
             this.$store.state.user.transactionReceipt = receipt
           })

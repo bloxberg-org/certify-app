@@ -11,6 +11,11 @@ module.exports = {
     post: async (req, res, next) => {
       console.log(req.body.certificateVariables.transactionHash)
       const transactionHash = req.body.certificateVariables.transactionHash
+
+      if (typeof transactionHash !== 'string') {
+        const err = new Error('Transaction hash was not a string')
+        return res.status(400).send({ msg: err.message })
+      }
       // const transactionHash = req.body
       let certBackground = fs.readFileSync('./src/assets/certbackground3.jpg', {encoding: 'base64'})
 
@@ -152,8 +157,7 @@ module.exports = {
         )
       var data = doc.output()
       fs.writeFileSync('./src/assets/bloxbergDataCertificate.pdf', data, 'ascii')
-      // var filePath = './src/assets/bloxbergDataCertificate.pdf'
-
+      res.setHeader('Content-Disposition', 'attachment; filename=' + 'bloxbergDataCertificate')
       res.sendFile('./src/assets/bloxbergDataCertificate.pdf', {root: './'})
     }
   }

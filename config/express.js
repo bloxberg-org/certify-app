@@ -26,5 +26,6 @@ module.exports = {
     app.use(cors());
     app.use(errorHandler());
     app.use(history());
+    // Import server-routes.
   }
 };
