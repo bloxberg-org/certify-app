@@ -2,19 +2,28 @@
 
     <v-card>
       <v-card-title>
-        <div id="bolder" class="body-2">Verify your transaction in the blockchain</div>
+      <div>
+          <div id="bolder" class="body-2">Verify your transaction in the blockchain        </div>
+          <div class="body-4">Table includes transactions from the past 12 hours. Please use the search to find earlier certifications.</div>
+          </div>
+ 
         <v-spacer></v-spacer>
+        
         <v-text-field
           v-model="search"
-          append-icon="search"
-          label="Search for an Transaction ID, Hash, or Date"
+          label="Search for a Transaction ID"
           single-line
           hide-details
-        ></v-text-field>
+        >
+        
+        </v-text-field>
+        <v-btn class = "accent secondary--text"
+        v-on:click="searchTransaction(search)"> 
+        <v-icon>fas fa-search</v-icon>
+        </v-btn>
       </v-card-title>
       <v-data-table
         v-bind:pagination.sync="pagination"
-        :search="search"
         :headers="headers"
         :items="smartContractReturn"
         class="elevation-1"
@@ -23,7 +32,7 @@
           slot="items"
           slot-scope="props"
         >
-          <td>{{ props.item.timeStampSubmit }}</td>
+          <td>{{ props.item.timeStampConfirmed }}</td>
           <td class="text-xs-right">
             <a v-bind:href="'https://blockexplorer.bloxberg.org/tx/' + props.item.hash + '/internal_transactions'">{{ props.item.hash }} </a>
           </td>
@@ -39,6 +48,7 @@
 import Request from 'axios-request-handler'
 import certifyResearchDataImport from '../../src/assets/createResearchDataABI.json'
 import abiDecoder from 'abi-decoder'
+const axios = require('axios')
 
 export default {
   name: 'certifytransactions',
@@ -49,7 +59,7 @@ export default {
           text: 'Timestamp',
           align: 'left',
           sortable: true,
-          value: 'timeStampSubmit'
+          value: 'timeStampConfirmed'
         },
         { text: 'Transaction ID', value: 'hash', sortable: false },
         { text: 'Checksum', value: 'checksum', sortable: false }
@@ -59,33 +69,45 @@ export default {
       timestamp: '',
       transaction: '',
       search: '',
-      pagination: { sortBy: 'timeStamp', descending: true, rowsPerPage: 10 }
+      pagination: { sortBy: 'timeStampConfirmed', descending: true, rowsPerPage: 10 }
     }
   },
   methods: {
     getSmartContract: function () {
+      var timeNow = Math.floor(Date.now() / 1000)
+
+      var timeOneMonth = timeNow - 92571
+      console.log(timeNow)
+      console.log(timeOneMonth)
+
       const smartContractPolling = new Request(
         'https://blockexplorer.bloxberg.org/api?module=account&action=txlist&address=' +
-          this.smartContractAddress
+          this.smartContractAddress + '&starttimestamp=' + timeOneMonth + '&endtimestamp=' + timeNow
       )
       var vm = this
       try {
         smartContractPolling
-          .poll(500000)
+          .poll(50000000)
           .get(response => {
+            console.log(response)
             response['data']['result'].shift()
             for (var key in response['data']['result']) {
+              // let authorName = this.authorDecoder(response['data']['result'][key]['input'])
+              // if (authorName === 'API Monitor') {
+              //  break
+              // } else {
               response['data']['result'][key]['timeStampConfirmed'] = this.timeConverter(
-                response['data']['result'][key]['timeStamp']
-              )
+                  response['data']['result'][key]['timeStamp']
+                )
               response['data']['result'][key]['checksum'] = this.checksumDecoder(
-                response['data']['result'][key]['input']
-              )
+                  response['data']['result'][key]['input']
+                )
               response['data']['result'][key]['timeStampSubmit'] = this.timeStampSubmitDecoder(
-                response['data']['result'][key]['input']
-              )
+                  response['data']['result'][key]['input']
+                )
+              // }
+              vm.smartContractReturn.push(response['data']['result'][key])
             }
-            vm.smartContractReturn = response['data']['result']
           })
           .then(contractData => {
           })
@@ -148,6 +170,37 @@ export default {
       } else {
         return null
       }
+    },
+    authorDecoder: function (rawInput) {
+      abiDecoder.addABI(certifyResearchDataImport)
+      const result = abiDecoder.decodeMethod(rawInput)
+      if (typeof result !== 'undefined') {
+        return result['params'][2]['value']
+      } else {
+        return null
+      }
+    },
+    searchTransaction: function (txid) {
+      let transactionQuery = 'https://blockexplorer.bloxberg.org//api?module=transaction&action=gettxinfo&txhash=' + txid
+      axios.get(transactionQuery)
+      .then(response => {
+        console.log(response['data']['result'])
+        response['data']['result']['timeStampConfirmed'] = this.timeConverter(
+                response['data']['result']['timeStamp']
+                )
+        response['data']['result']['checksum'] = this.checksumDecoder(
+                response['data']['result']['input']
+                )
+        response['data']['result']['timeStampSubmit'] = this.timeStampSubmitDecoder(
+                response['data']['result']['input']
+                )
+        console.log(this.smartContractReturn)
+        this.smartContractReturn = []
+        this.smartContractReturn.push(response['data']['result'])
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
     }
   },
   created () {

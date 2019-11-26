@@ -27,8 +27,9 @@ module.exports = {
         const response = await axios.get('https://blockexplorer.bloxberg.org//api?module=transaction&action=gettxinfo&txhash=' + transaction)
         const decodedTransaction = await abiDecoder.decodeMethod(response['data']['result']['input'])
         const blockNumber = response['data']['result']['blockNumber']
+        const timeStampConfirmed = response['data']['result']['timeStamp']
         Promise.resolve(decodedTransaction)
-        return {decodedTransaction: decodedTransaction, blockNumber: blockNumber}
+        return {decodedTransaction: decodedTransaction, blockNumber: blockNumber, timeStampConfirmed: timeStampConfirmed}
       }
 
       const generateQR = async transactionHash => {
@@ -49,7 +50,11 @@ module.exports = {
       const decodedTransaction = await getTransactionParams(transactionHash, certifyResearchDataImport)
       const checksum = decodedTransaction['decodedTransaction']['params'][0]['value']
       let authorName = decodedTransaction['decodedTransaction']['params'][2]['value']
-      let timestampInitial = decodedTransaction['decodedTransaction']['params'][3]['value']
+      //let timestampInitial = decodedTransaction['decodedTransaction']['params'][3]['value']
+      let timestampInitial = decodedTransaction['timeStampConfirmed']
+
+      //Timestamp on Certificate should be the confirmed transaction time as opposed to submitted transaction
+
 
       if (authorName !== '') {
       } else {
@@ -86,7 +91,7 @@ module.exports = {
       timestampInitial = timeConverter(timestampInitial)
       var smartAddress = 'Contract Address: ' + contractAddress
       var blockNumber = 'Block Number: ' + decodedTransaction['blockNumber']
-      timeStamp = 'Time transaction submitted: ' + timestampInitial
+      timeStamp = 'Time transaction confirmed: ' + timestampInitial
       let dataHash = checksum
       const title = 'bloxberg Data Certificate'
       var certBackgroundURL = 'data:image/jpeg;base64,' + certBackground
