@@ -33,8 +33,6 @@
         <v-spacer></v-spacer>
         <v-toolbar-items id="toolbaritems">
           <v-btn class="primary--text" :to="{name: 'CertifyComponent'}" flat>Certify & Verify</v-btn>
-          <v-btn class="primary--text" :to="{name: 'Faucet'}" flat>Faucet</v-btn>
-          <v-btn class="primary--text" :to="{name: 'BlockExplorer'}" flat>Explorer</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <main>
@@ -52,7 +50,6 @@
 
 <script>
 import NavbarApp from './NavbarApp'
-import VerifyModal from './VerifyModal'
 import CertifyModal from './CertifyModal'
 import Verify from './Verify'
 import store from '../store'
@@ -60,16 +57,12 @@ import { mapState, mapActions } from 'vuex'
 import { ACTION_TYPES } from '../util/constants'
 import UserManager from '../js/UserManager'
 import monitorWeb3 from '../util/web3/monitorWeb3'
-import CertifyTransactionHistory from './CertifyTransactionHistory'
-
 export default {
   props: ['currentView'],
   components: {
     NavbarApp,
     CertifyModal,
-    VerifyModal,
-    Verify,
-    CertifyTransactionHistory
+    Verify
   },
   store,
   beforeCreate: function () {

@@ -12,22 +12,6 @@
             <v-list-tile-title class="title primary--text">Certify & Verify</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-        <v-list-tile :to="{name: 'Faucet'}">
-          <v-list-tile-action>
-            <v-icon class="accent--text">fas fa-tint</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title class="title primary--text">Faucet</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile :to="{name: 'BlockExplorer'}">
-          <v-list-tile-action>
-            <v-icon class="accent--text">fas fa-th-large</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title class="title primary--text">Block Explorer</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
 
@@ -44,14 +28,11 @@
       <v-toolbar-side-icon class="hidden-sm-and-up" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
 
       <v-toolbar-items id="toolbaritems" class="hidden-xs-only">
-
         <v-btn class="primary--text" :to="{name: 'CertifyComponent'}" flat>Certify & Verify</v-btn>
-        <v-btn class="primary--text" :to="{name: 'Faucet'}" flat>Faucet</v-btn>
-        <v-btn class="primary--text" :to="{name: 'BlockExplorer'}" flat>Explorer</v-btn>
       </v-toolbar-items>
     </v-toolbar>
   </div>
-</template> 
+</template>
 
 <script>
 const axios = require('axios')

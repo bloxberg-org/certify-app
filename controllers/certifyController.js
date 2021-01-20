@@ -11,9 +11,9 @@ const fileContents = fs.readFileSync(
 module.exports = {
   certifyData: {
     post: async (req, res, next) => {
-      const checksum = req.body.certifyVariables.checksum
-      const authorName = req.body.certifyVariables.authorName
-      const timestampString = req.body.certifyVariables.timestampString
+      const checksum = req.body.metadataVariables.checksum
+      const authorName = req.body.metadataVariables.authorName
+      const timestampString = req.body.metadataVariables.timestampString
 
       console.log(checksum)
       console.log(authorName)

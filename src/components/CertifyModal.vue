@@ -3,9 +3,7 @@
     <v-btn class="mainaccent secondary--text" large @click.stop="dialog = true">
       Certify
     </v-btn>
-
     <v-dialog class="accent" v-model="dialog" persistent width="100vh">
-
       <v-card class="secondary primary--text">
         <div>
           <v-btn color="red" icon flat @click.stop="resetModal">
@@ -121,14 +119,17 @@ export default {
       this.errorMsg = errorMsg
     },
     onComplete: async function () {
-      this.transactionReceipt = this.$store.state.user.transactionReceipt
-      const certificateVariables = {
-        transactionHash: this.transactionReceipt.transactionHash
+      let certificateVariables = this.$store.state.user.dataURL
+      var API_URL
+      if (process.env.CLIENT_ENV === 'development') { API_URL = 'http://localhost:7000/generatePDF' } else if (process.env.CLIENT_ENV === 'qa') {
+        API_URL = 'https://qa.certify.bloxberg.org/generatePDF'
+      } else if (process.env.CLIENT_ENV === 'production') {
+        API_URL = 'https://certify.bloxberg.org/generatePDF'
       }
-      axios.post('/generateCertificate', {certificateVariables}, {responseType: 'arraybuffer'})
+      axios.post(API_URL, certificateVariables, {responseType: 'arraybuffer'})
           .then(response => {
-            var blob = new Blob([response.data], {type: 'application/pdf;charset=utf-8'})
-            FileSaver.saveAs(blob, 'BloxbergDataCertificate.pdf')
+            var blob = new Blob([response.data], {type: 'application/x-zip-compressed'})
+            FileSaver.saveAs(blob, 'BloxbergDataCertificates.zip')
             this.revert = true
             this.resetModal()
           })
@@ -138,10 +139,11 @@ export default {
       // Reset all user data associated with Certification
       this.revert = true
       this.dialog = false
+      this.$store.state.user.dataURL = ''
       this.$store.state.user.authorName = ''
       this.$store.state.user.checksum = ''
       this.$store.state.user.researchTitle = ''
-      this.$store.state.user.organizationName = ''
+      this.$store.state.user.mintAddress = ''
       this.$store.state.user.emailAddress = ''
       this.$store.state.user.transactionReceipt = ''
       // this.$store.state.user.validatedUpload = false

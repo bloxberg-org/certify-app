@@ -3,9 +3,9 @@
     <v-layout justify-center align-center>
       <div class="text-xs-center">
         <div v-if="hasWeb3InjectedBrowser">
-          <p class="font-weight-bold">Please make sure to login to Metamask using our node at https://bloxberg.org/eth/ <br>and request Ether at our faucet before submitting a transaction.</p>
+          <p class="font-weight-bold">Please make sure to login to Metamask using our node at https://core.bloxberg.org and chainID 8995 <br>and request Ether at our faucet before submitting a transaction.</p>
         </div>
-        <v-btn v-on:click="certify" :loading="loading" :disabled="loading" class="accent secondary--text animated pulse delay-1.5s" @click.native="loader = 'loading'" large round>
+        <v-btn @click="certify" :loading="loading" :disabled="loading" class="accent secondary--text animated pulse delay-1.5s" large round>
           Certify on the Blockchain
         </v-btn>
         <h3>{{miningMsg}}</h3>
@@ -19,30 +19,24 @@
 </template>
 
 <script>
-import certBackground from '../assets/certbackground3.jpg'
-const certifyResearchDataImport = require('../assets/createResearchDataABI.json')
 import axios from 'axios'
-
+import web3 from 'web3'
 export default {
   props: ['revert'],
   name: 'certify-certificate',
   data () {
     return {
       loader: null,
-      gasAmount: null,
       loading: false,
       alert: false,
+      API_URL: '',
       ethAddress: '',
       timestampString: '',
-      checksum: '',
       authorName: '',
       finishTransaction: false,
       miningMsg: '',
-      web3Browser: this.$store.state.web3.web3Browser,
-      hasWeb3InjectedBrowser: this.$store.state.user.hasWeb3InjectedBrowser,
-      certBackground: certBackground,
-      metamaskMessage: '',
-      usingMetaMask: this.$store.state.user.hasWeb3InjectedBrowser
+      publicKey: '',
+      metamaskMessage: ''
     }
   },
   mounted () {
@@ -52,32 +46,20 @@ export default {
     revert (value) {
       if (value === true) {
         this.loading = false
+        this.loader = null
         this.miningMsg = ''
         this.gasAmount = null
         this.finishTransaction = false
         this.authorName = ''
         this.timestampString = ''
         this.alert = false
+        this.publicKey = ''
         this.metamaskMessage = ''
         this.usingMetaMask = ''
       }
     }
   },
   methods: {
-    toDataUrl: async (file, callback) => {
-      var xhr = new XMLHttpRequest()
-      xhr.responseType = 'blob'
-      xhr.onload = function () {
-        var reader = new FileReader()
-        reader.onloadend = function () {
-          callback(reader.result)
-        }
-        reader.readAsDataURL(xhr.response)
-      }
-      xhr.open('GET', file)
-      xhr.send()
-    },
-
     timeConverter: function (unixTimestamp) {
       var a = new Date(unixTimestamp * 1000)
       var months = [
@@ -104,100 +86,83 @@ export default {
         date + ' ' + month + ' ' + year + ' ' + hour + ':' + min.substr(-2) + ':' + sec.substr(-2) + ' (UTC)'
       return time
     },
-    estimateGas: async function () {
-      const certifyResearchDataContract = new web3.eth.Contract(certifyResearchDataImport, '0xe5a9654c7e190701016ebf18206020bf16d8beab')
-      const timestamp = new Date().getTime() / 1000 // Define timestamp on the client side before posting to SC
-      this.timestampString = timestamp.toString()
-      this.$store.state.user.timestampString = this.timeConverter(
-              this.timestampString
-            )
-      this.checksum = this.$store.state.user.checksum
-      this.authorName = this.$store.state.user.authorName
-      console.log(this.checksum)
-      const gasAmount = await certifyResearchDataContract.methods.createData(this.checksum, true, this.authorName, this.timestampString).estimateGas({from: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'})
-      this.gasAmount = gasAmount
-      return gasAmount
+    makeloader: function () {
+      this.loading = true
+    },
+    isValidPublicKey: function (address) {
+      return web3.utils.isAddress(address)
     },
     certify: async function () {
-      var self = this
+      // eslint-disable-next-line no-unused-vars
       this.loading = true
       this.miningMsg = 'Processing Transaction...'
       // If no MetaMask, compute server side
-      if (this.$store.state.web3.networkId === null) {
-        const timestamp = new Date().getTime() / 1000 // Define timestamp on the client side before posting to SC
-        this.timestampString = timestamp.toString()
-        this.$store.state.user.timestampString = this.timeConverter(
-          this.timestampString
-        )
-        const certifyVariables = {
-          checksum: this.$store.state.user.checksum,
+      try {
+        const metadataVariables = {
           authorName: this.$store.state.user.authorName,
-          timestampString: this.timestampString
+          researchTitle: this.$store.state.user.researchTitle,
+          emailAddress: this.$store.state.user.emailAddress
         }
-        // Send to server to perform transaction
-        axios
-          .post('/certifyData', { certifyVariables })
-          .then(res => {
-            this.$store.state.user.transactionReceipt = res.data.txReceipt
-          })
-          .then(() => {
-            this.loading = false
-            this.miningMsg = 'Transaction Confirmed! Select Finish to create your certificate.'
-            this.$store.state.user.validatedTransaction = true
-            // Convert image to Binary data and store to state
-            try {
-              this.toDataUrl(this.certBackground, dataUrl => {
-                this.$store.state.user.dataURL = dataUrl
-                return
-              })
-            } catch (err) {
-              console.log(err)
-            }
-          })
-          .catch(err => {
-            console.log('Error sending certificate data', err)
-            this.miningMsg = 'Sorry, something went wrong with confirming your transaction.'
-          })
-        // if Metamask exists in Browser
-      } else {
-        await this.estimateGas()
-        console.log('Using Metamask Account')
-        this.ethAddress = this.$store.state.web3.coinbase
-        console.log('Current address ' + this.ethAddress)
-        const certifyResearchDataContract = new web3.eth.Contract(certifyResearchDataImport, '0xe5a9654c7e190701016ebf18206020bf16d8beab')
-        const timestamp = new Date().getTime() / 1000 // Define timestamp on the client side before posting to SC
-        this.timestampString = timestamp.toString()
-        this.$store.state.user.timestampString = this.timeConverter(
-               this.timestampString
-             )
-        this.checksum = this.$store.state.user.checksum
-        this.authorName = this.$store.state.user.authorName
-        await certifyResearchDataContract.methods.createData(self.checksum, true, self.authorName, self.timestampString).send({
-          // from: self.ethAddress, gas: self.gasAmount, gasPrice: 9000000000})
-          from: self.ethAddress, gas: 1000000, gasPrice: 50000000000})
-          .then((receipt) => {
-            this.$store.state.user.transactionReceipt = receipt
-          })
-          .then(finished => {
-            this.loading = false
-            this.miningMsg = 'Transaction Confirmed! Select Finish to create your certificate.'
-            this.$store.state.user.validatedTransaction = true
-            // Convert image to Binary data and store to state
-            try {
-              this.toDataUrl(this.certBackground, dataUrl => {
-                this.$store.state.user.dataURL = dataUrl
-              })
-            } catch (err) {
-              console.log(err)
-            }
-          })
-          .catch(error => {
-            this.loading = false
-            this.transactionError = true
-            this.miningMsg = "We couldn't complete your transaction. Have you logged into Metamask?"
-            console.log(error)
-          })
+        const metadataString = JSON.stringify(metadataVariables)
+        let crid = this.$store.state.user.checksum
+        // let publicKey
+        console.log(this.publicKey)
+        console.log(typeof (this.$store.state.user.mintAddress))
+        console.log(this.$store.state.user.mintAddress)
+        this.publicKey = this.$store.state.user.mintAddress
+        //  let publicKey = '0x9858eC18a269EE69ebfD7C38eb297996827DDa98'
+        if (this.publicKey === '') {
+          this.publicKey = '0x9858eC18a269EE69ebfD7C38eb297996827DDa98'
+          console.log(this.publicKey)
+        } else {
+          console.log('public key provided')
+          console.log(this.publicKey)
+          this.publicKey = this.$store.state.user.mintAddress
+        }
+
+        // Check if valid public key
+        const isValid = this.isValidPublicKey(this.publicKey)
+        if (isValid === false) {
+          // eslint-disable-next-line no-throw-literal
+          throw 'Invalid Public Key'
+        }
+        console.log(crid)
+        this.certificateRequest = {
+          'publicKey': this.publicKey,
+          'crid': crid,
+          'cridType': 'sha2-256',
+          'enableIPFS': false,
+          'metadataJson': metadataString
+        }
+      } catch (err) {
+        console.log(err)
       }
+      console.log(process.env.CLIENT_ENV)
+      console.log(process.env)
+      var API_URL
+      if (process.env.CLIENT_ENV === 'development') { API_URL = 'http://localhost:7000/createBloxbergCertificate' } else if (process.env.CLIENT_ENV === 'qa') {
+        API_URL = 'https://qa.certify.bloxberg.org/createBloxbergCertificate'
+      } else if (process.env.CLIENT_ENV === 'production') {
+        API_URL = 'https://certify.bloxberg.org/createBloxbergCertificate'
+      }
+      console.log(API_URL)
+      axios
+        .post(API_URL, this.certificateRequest)
+        .then(res => {
+          console.log(res)
+          this.$store.state.user.dataURL = res.data
+        })
+        .then(() => {
+          this.loading = false
+          this.miningMsg = 'Transaction Confirmed! Select Finish to create your certificate.'
+          this.$store.state.user.validatedTransaction = true
+        })
+        .catch(err => {
+          this.loading = false
+          console.log('Error sending certificate data', err)
+          this.miningMsg = 'Sorry, something went wrong with confirming your transaction.'
+        })
+      // if Metamask exists in Browser
     }
   }
 }

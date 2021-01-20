@@ -17,18 +17,13 @@
                 <v-icon class="mainaccentlight--text" id="lock">fas fa-fingerprint
                 </v-icon>
                 <!-- <v-img id="lock" v-bind:src="require('../assets/lock.png')" contain></v-img> -->
+
               </div>
               <div class="body-2 text-xs-center primary--text mb-3">Have you already certified some data on our blockchain? Utilize this tool to look up your previously published data hash.
 
               </div>
-              <div class="body-2 text-xs-center primary--text">
-                <b>You must use the exact same data file you previously used to upload via the Certify tool</b>
-              </div>
-              <v-layout justify-center>
-                <v-card-actions>
-                  <VerifyModal/>
-                </v-card-actions>
-              </v-layout>
+              <Blockcerts></Blockcerts>
+
             </v-card>
           </v-flex>
         </v-layout>
@@ -39,12 +34,12 @@
 </template>
 
 <script>
-import VerifyModal from './VerifyModal'
+import Blockcerts from './Blockcerts'
 export default {
   name: 'certify',
   props: ['currentView'],
   components: {
-    VerifyModal
+    Blockcerts
   },
   data: () => ({
     drawer: null,
@@ -77,6 +72,11 @@ export default {
 #certifytext {
   padding-left: 1%;
   padding-right: 1%;
+}
+#verifier {
+	max-width: 700px;
+	margin: 0 auto;
+	width: 100%;
 }
 #title {
   text-decoration: none;

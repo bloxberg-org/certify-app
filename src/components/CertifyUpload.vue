@@ -9,7 +9,7 @@
                 How would you like to generate the hash?
               </h3>
               <v-radio-group v-model="fromFile" row>
-                <v-radio label="Generate from File" value=true></v-radio>
+                <v-radio label="Generate from File(s)" value=true></v-radio>
                 <v-radio label="Manual Entry" value=false></v-radio>
               </v-radio-group>
             </v-flex>
@@ -18,7 +18,7 @@
         <v-layout row wrap>
           <v-layout v-if="fromFile === 'true'" justify-center>
             <div class="upload-btn">
-              <input id="uploadFile" value=null type="file" name="uploadFile" v-on:change="captureFile" />
+              <input id="uploadFile" value=null type="file" name="uploadFile" @change="captureFile" multiple />
               <label for="uploadFile" v-ripple class="mainaccent secondary--text v-btn v-btn--large upload-btn upload-btn-hover">
                 Generate from File
                 <i class="fas fa-file-import"> </i>
@@ -49,9 +49,9 @@ export default {
     return {
       appendicon: 'block',
       completeIcon: '',
-      label: 'File Name',
+      label: 'File Name(s)',
       authorName: '',
-      files: [],
+      files: undefined,
       btnMsg: 'Submit Hash',
       divider: true,
       fileName: '',
@@ -61,7 +61,7 @@ export default {
       fromFile: null,
       manualchecksum: null,
       hashchecksum: 'Please select your desired file',
-      checksum: '',
+      checksum: [],
       buffer: ''
     }
   },
@@ -70,13 +70,14 @@ export default {
       console.log(newVal)
       if (newVal === true) {
         this.completeIcon = ''
+        this.files = undefined
         this.fileName = null
         this.btnMsg = 'Submit Hash'
         this.btncolor = ''
         this.appendicon = 'block'
         this.hashchecksum = 'Please select your desired file'
         this.manualchecksum = null
-        this.checksum = ''
+        this.checksum = []
         this.$refs.form.resetValidation()
         this.$store.state.user.validatedUpload = false // Update the state to reset form validation
       }
@@ -84,9 +85,7 @@ export default {
     deep: true
   },
   created () {
-    // Change to OnSubmit
-    // this.$store.state.user.authorName = this.authorName
-    // this.$store.state.user.checksum = this.checksum
+
   },
   components: {
     'upload-btn': UploadButton
@@ -100,16 +99,18 @@ export default {
     },
     captureFile: function (event) {
       this.value = null
-      event = event.target.files[0]
-
-      this.fileName = event.name
-      const file = event
-      try {
-        let reader = new window.FileReader()
-        reader.readAsArrayBuffer(file)
-        reader.onloadend = () => this.convertToBuffer(reader)
-      } catch (err) {
-        console.log(err)
+      this.files = event.target.files
+      for (var i = 0; i < this.files.length; i++) {
+        event = this.files[i]
+        this.fileName += this.files[i].name + ', '
+        const file = event
+        try {
+          let reader = new window.FileReader()
+          reader.readAsArrayBuffer(file)
+          reader.onloadend = () => this.convertToBuffer(reader)
+        } catch (err) {
+          console.log(err)
+        }
       }
     },
 
@@ -117,8 +118,8 @@ export default {
       try {
         let wordArray = CryptoJS.lib.WordArray.create(reader.result)
         let hash = CryptoJS.SHA256(wordArray).toString()
-        this.checksum = hash
-        this.hashchecksum = 'Hash: ' + hash
+        this.checksum.push(hash)
+        this.hashchecksum = 'Hash(es): ' + this.checksum
         const buffer = Buffer.from(reader.result)
         // //set this buffer -using es6 syntax
         this.buffer = buffer

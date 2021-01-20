@@ -11,8 +11,6 @@
 
     <v-toolbar-items id="toolbaritems">
       <v-btn class="primary--text" :to="{name: 'CertifyComponent'}" flat>Certify & Verify</v-btn>
-      <v-btn class="primary--text" :to="{name: 'Faucet'}" flat>Faucet</v-btn>
-      <v-btn class="primary--text" :to="{name: 'BlockExplorer'}" flat>Explorer</v-btn>
     </v-toolbar-items>
   </v-toolbar>
 </template>

@@ -10,7 +10,7 @@ set -u
 
 # The remote server we are copying the files using ssh + public key authentication.
 # Specify this in .ssh/config
-REMOTE=ethereum
+REMOTE=bloxberg
 
 # Build dist folder using webpack
 #npm run build

@@ -9,7 +9,6 @@ var path = require('path')
 var chalk = require('chalk')
 var webpack = require('webpack')
 var config = require('../config')
-const workboxBuild = require('workbox-build');
 var webpackConfig = require('./webpack.prod.conf')
 
 var spinner = ora('building for production...')
@@ -38,18 +37,7 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
       '  Tip: built files are meant to be served over an HTTP server.\n' +
       '  Opening index.html over file:// won\'t work.\n'
     ))
-	
+
   })
 })
 
-    // NOTE: This should be run *AFTER* all your assets are built
-    const buildSW = () => {
-  // This will return a Promise
-    return workboxBuild.generateSW({
-    globDirectory: '../dist',
-    globPatterns: [
-      '**\/*.{html,json,js,css}',
-    ],
-    swDest: '../dist/sw.js',
-  });
-}

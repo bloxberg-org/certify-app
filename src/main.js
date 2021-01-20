@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import App from './components/App.vue'
@@ -5,7 +6,6 @@ import router from './router'
 import store from './store'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
-import 'babel-polyfill'
 
 Vue.config.devtools = true
 Vue.config.productionTip = false
@@ -32,6 +32,7 @@ Vue.use(Vuetify, {
     maindark: '#0b5da2'
   }
 })
+
 /* eslint-disable no-new */
 
 new Vue({
