@@ -22,7 +22,7 @@
     "@vue/cli": "^3.0.0-rc.10",
     "@webcomponents/webcomponentsjs": "^2.4.4",
     "abi-decoder": "^2.0.1",
-    "axios": "^0.18.0",
+    "axios": "^0.21.2",
     "axios-request-handler": "^1.0.3",
     "babel-polyfill": "^6.26.0",
     "bip39": "^2.4.0",
