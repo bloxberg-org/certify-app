@@ -18,4 +18,4 @@ REMOTE=bloxberg-qa
 # Copy local dist folder to the remote server Nginx folder over sudoed
 # Assum the default user specified in .ssh/config has passwordless sudo
 # https://crashingdaily.wordpress.com/2007/06/29/rsync-and-sudo-over-ssh/
-rsync -r --rsync-path="sudo rsync" dist/* $REMOTE:/srv/bloxbergcertifyapp/dist
+rsync -r --rsync-path="sudo rsync" dist/* $REMOTE:/srv/qa/bloxbergcertifyapp/dist

@@ -10,6 +10,10 @@ var webpackConfig = merge(baseConfig, {
   module: {
     rules: utils.styleLoaders()
   },
+  optimization: {
+    usedExports: true,
+    minimize: true,
+  },
   devtool: '#inline-source-map',
   resolveLoader: {
     alias: {

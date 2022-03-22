@@ -21,6 +21,10 @@ var webpackConfig = merge(baseWebpackConfig, {
       extract: true
     })
   },
+  //optimization: {
+  //  usedExports: true,
+  //  minimize: true,
+  //},
   devtool: config.build.productionSourceMap ? '#source-map' : false,
   output: {
     path: config.build.assetsRoot,
@@ -52,6 +56,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         safe: true
       }
     }),
+
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin

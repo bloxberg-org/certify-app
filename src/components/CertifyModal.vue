@@ -121,12 +121,18 @@ export default {
     onComplete: async function () {
       let certificateVariables = this.$store.state.user.dataURL
       var API_URL
-      if (process.env.CLIENT_ENV === 'development') { API_URL = 'http://localhost:7000/generatePDF' } else if (process.env.CLIENT_ENV === 'qa') {
+      var headers
+      if (process.env.CLIENT_ENV === 'development') {
+        API_URL = 'http://localhost:7000/generatePDF'
+        headers = {'api_key': process.env.DEV_API_KEY}
+      } else if (process.env.CLIENT_ENV === 'testing') {
         API_URL = 'https://qa.certify.bloxberg.org/generatePDF'
+        headers = {'api_key': process.env.QA_API_KEY}
       } else if (process.env.CLIENT_ENV === 'production') {
         API_URL = 'https://certify.bloxberg.org/generatePDF'
+        headers = {'api_key': process.env.PROD_API_KEY}
       }
-      axios.post(API_URL, certificateVariables, {responseType: 'arraybuffer'})
+      axios.post(API_URL, certificateVariables, {responseType: 'arraybuffer', headers})
           .then(response => {
             var blob = new Blob([response.data], {type: 'application/x-zip-compressed'})
             FileSaver.saveAs(blob, 'BloxbergDataCertificates.zip')

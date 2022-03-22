@@ -105,12 +105,7 @@ export default {
         }
         const metadataString = JSON.stringify(metadataVariables)
         let crid = this.$store.state.user.checksum
-        // let publicKey
-        console.log(this.publicKey)
-        console.log(typeof (this.$store.state.user.mintAddress))
-        console.log(this.$store.state.user.mintAddress)
         this.publicKey = this.$store.state.user.mintAddress
-        //  let publicKey = '0x9858eC18a269EE69ebfD7C38eb297996827DDa98'
         if (this.publicKey === '') {
           this.publicKey = '0x9858eC18a269EE69ebfD7C38eb297996827DDa98'
           console.log(this.publicKey)
@@ -134,20 +129,27 @@ export default {
           'enableIPFS': false,
           'metadataJson': metadataString
         }
+        console.log(this.certificateRequest)
       } catch (err) {
         console.log(err)
       }
       console.log(process.env.CLIENT_ENV)
       console.log(process.env)
       var API_URL
-      if (process.env.CLIENT_ENV === 'development') { API_URL = 'http://localhost:7000/createBloxbergCertificate' } else if (process.env.CLIENT_ENV === 'qa') {
+      var headers
+      if (process.env.CLIENT_ENV === 'development') {
+        API_URL = 'http://localhost:7000/createBloxbergCertificate'
+        headers = {'api_key': process.env.DEV_API_KEY}
+      } else if (process.env.CLIENT_ENV === 'testing') {
         API_URL = 'https://qa.certify.bloxberg.org/createBloxbergCertificate'
+        headers = {'api_key': process.env.QA_API_KEY}
       } else if (process.env.CLIENT_ENV === 'production') {
         API_URL = 'https://certify.bloxberg.org/createBloxbergCertificate'
+        headers = {'api_key': process.env.PROD_API_KEY}
       }
       console.log(API_URL)
       axios
-        .post(API_URL, this.certificateRequest)
+        .post(API_URL, this.certificateRequest, {headers})
         .then(res => {
           console.log(res)
           this.$store.state.user.dataURL = res.data

@@ -29,7 +29,7 @@
             <v-text-field class="primary--text" v-model="fileName" :hint="hashchecksum" :label=label :success="!!fileName" :append-icon=appendicon readonly persistent-hint outline required></v-text-field>
           </v-flex>
           <v-flex v-if="fromFile === 'false'" class="accent--text" xs12 sm12>
-            <v-text-field v-model="manualchecksum" @change="manualcheck" label="Enter Hash Manually" :success="!!checksum" hint="If you prefer generating your own hash for your data, enter it here." persistent-hint outline></v-text-field>
+            <v-text-field v-model="manualchecksum" @change="manualcheck" label="Enter Hash Manually" :success="!!manualchecksum" hint="If you prefer generating your own hash for your data, enter it here." persistent-hint outline></v-text-field>
           </v-flex>
         </v-layout>
       </v-container>
@@ -94,7 +94,12 @@ export default {
   methods: {
     manualcheck: function (event) {
       // this.fileName = ' '
-      this.checksum = this.manualchecksum
+      try {
+        this.checksum.shift()
+      } catch (err) {
+        console.log(err)
+      }
+      this.checksum.push(this.manualchecksum)
       this.updateStore()
     },
     captureFile: function (event) {
@@ -121,7 +126,6 @@ export default {
         this.checksum.push(hash)
         this.hashchecksum = 'Hash(es): ' + this.checksum
         const buffer = Buffer.from(reader.result)
-        // //set this buffer -using es6 syntax
         this.buffer = buffer
         // for Chrome you must set the upload value to null
         document.getElementById('uploadFile').value = null

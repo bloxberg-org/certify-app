@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node build/dev-server.js",
     "build": "node build/build.js",
+    "qa": "node build/test.js",
     "bloxberg": "nodemon index.js",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
@@ -14,7 +15,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.2.0",
-    "@bloxberg-org/blockcerts-verifier": "^1.1.2",
+    "@bloxberg-org/blockcerts-verifier": "^1.1.5",
     "@fortawesome/fontawesome-svg-core": "^1.2.2",
     "@fortawesome/free-solid-svg-icons": "^5.2.0",
     "@fortawesome/vue-fontawesome": "^0.1.1",

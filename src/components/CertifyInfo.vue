@@ -56,8 +56,6 @@
         },
         mintaddressChange: function () {
           this.$store.state.user.mintAddress = this.mintAddress
-          console.log(this.mintAddress)
-          console.log(this.$store.state.user.mintAddress)
         },
         titleChange: function () {
           this.$store.state.user.researchTitle = this.researchTitle

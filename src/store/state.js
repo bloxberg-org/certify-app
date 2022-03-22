@@ -1,15 +1,15 @@
 export default {
   currentRoute: null,
   currentView: null,
-  web3: {
-    address: null,
-    coinbase: null,
-    error: null,
-    instance: null,
-    isInjected: false,
-    networkId: null,
-    web3Browser: null
-  },
+  // web3: {
+  //   address: null,
+  //   coinbase: null,
+  //   error: null,
+  //   instance: null,
+  //   isInjected: false,
+  //   networkId: null,
+  //   web3Browser: null
+  // },
   user: {
     balance: '0.00',
     revert: false,

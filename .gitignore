@@ -4,4 +4,6 @@ truffle.js
 deploymentProd.sh
 deploymentScript.sh
 .vscode
+dist
 deploymentDev.sh
+config
